@@ -1,0 +1,74 @@
+Products:
+ - Name: nexus-1
+   Logo: ./products/nexus-1/nexus-1.png
+   Documentation: ./products/nexus-1/product-markdown-sample.md
+   PoliciesXmlFile: ./products/nexus-1/policies.xml
+   Description: | 
+     product from automation
+   Published: true
+   ApiKeyRequired: true
+   ClientCredentialRequired: false
+   ProviderApprovalRequired: false
+   LegalTerms: Terms
+ - Name: nexus-2
+   Logo: ./products/nexus-2/nexus-2.png
+   Documentation: ./products/nexus-2/product2-markdown-sample.md
+   PoliciesXmlFile: ./products/nexus-2/policies.xml
+   Description: | 
+     product from automation
+   Published: true
+   ApiKeyRequired: true
+   ClientCredentialRequired: false
+   ProviderApprovalRequired: false
+   LegalTerms: Terms
+
+Apis:
+ - Name: nexus
+   ApiVersions:
+    - PathIdentifier: v1
+      ApiLogoFile: ./apis/nexus/nexus-v1.png
+      ApiDocumentation: ./apis/nexus/markdown-sample.md
+      OpenApiSpecFile: ./apis/nexus/nexus-v1.json
+      Published: true
+      ProductNames: [nexus-1]
+      PoliciesXmlFile: ./apis/nexus/policies.xml
+      Revisions:
+       - RevisionDescription: Rev2
+         OpenApiSpecFile: ./apis/nexus/v1/nexus-r2.json
+         IsCurrent: true
+    - PathIdentifier: v2
+      ApiLogoFile: ./apis/nexus/nexus-v2.png
+      ApiDocumentation: ./apis/nexus/markdown-sample.md
+      OpenApiSpecFile: ./apis/nexus/nexus-v2.json
+      Published: true
+      ProductNames: [nexus-1]
+      PoliciesXmlFile: ./apis/nexus/policies.xml
+      Revisions:
+       - RevisionDescription: Rev2
+         OpenApiSpecFile: ./apis/nexus/v2/nexus-r2.json
+         IsCurrent: true
+   Path: nexus
+ - Name: nexus2
+   ApiVersions:
+    - PathIdentifier: v1
+      ApiLogoFile: ./apis/nexus2/nexus-v1.png
+      ApiDocumentation: ./apis/nexus2/markdown-sample.md
+      OpenApiSpecFile: ./apis/nexus2/nexus-v1.json
+      Published: true
+      ProductNames: [nexus-2]
+      PoliciesXmlFile: ./apis/nexus2/policies.xml
+      Revisions:
+       - RevisionDescription: Rev2
+         OpenApiSpecFile: ./apis/nexus2/v1/nexus-r2.json
+         IsCurrent: true
+   Path: nexus2
+ - Name: nexus3
+   ApiVersions:
+    - PathIdentifier: v1
+      ApiLogoFile: ./apis/nexus3/nexus-v1.png
+      ApiDocumentation: ./apis/nexus3/markdown-sample.md
+      OpenApiSpecFile: ./apis/nexus3/nexus-v1.json
+      Published: true
+      ProductNames: [nexus-2]
+      PoliciesXmlFile: ./apis/nexus3/policies.xml
+   Path: nexus3

@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Destructurama;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,14 +9,37 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 
 namespace GatewayPublishing
 {
     class Program
     {
-        static void Main()
+        static void Main(string[] args)
         {
+            var minLogLevelSwitch = new Serilog.Core.LoggingLevelSwitch();
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
+                .Destructure.JsonNetTypes()
+                .Enrich.FromLogContext()
+                .Enrich.WithProperty("Gateway automation publishing", GatewayAutomationAppVersion.Current)
+                .MinimumLevel.ControlledBy(minLogLevelSwitch)
+                .CreateLogger();
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(new[]
+                {
+                        KeyValuePair.Create("<dummy>", "must exist to avoid issues"),
+                })
+                .AddCommandLine(args)
+                .Build()
+                .Get<CommandLineConfig>();
+
+            Log.Information("Hello World!");
+            Log.Information("{SubscriptionId} :", config.SubscriptionId.ToString());
+            Log.Information("{Token} :", config.Token);
+            Console.ReadLine();
+
             Console.WriteLine("Enter the JWT token");
             var token = Console.ReadLine();
             var baseUrl = @"https://kmd-logic-api-shareddev-webapp.azurewebsites.net/";
@@ -76,7 +102,8 @@ namespace GatewayPublishing
 
         private static HttpResponseMessage ApplyPolicies(HttpClient client, string subscriptionId, string entityId, string xmlPath, PolicyEntityType policyEntityType)
         {
-            var requestBody = new PolicyRequest { 
+            var requestBody = new PolicyRequest
+            {
                 EntityId = new Guid(entityId),
                 Name = $"Policy-{entityId}",
                 Description = "Policy for product through automation",
@@ -139,7 +166,7 @@ namespace GatewayPublishing
                 }
             }
 
-            return new Dictionary<string, List<HttpResponseMessage>> { 
+            return new Dictionary<string, List<HttpResponseMessage>> {
                 { "apis", httpResponseMessagesForApis },
                 { "revisions", httpResponseMessagesForApiRevisions},
                 { "policies", httpResponseMessagesForApiPolicies }
@@ -170,7 +197,7 @@ namespace GatewayPublishing
             var docContent = GetByteArrayContent(version.ApiDocumentation);
             var productIds = productResponses.Where(x => version.ProductNames.Contains(x.Name)).Select(x => x.Id).ToList();
 
-            var requestBody = new MultipartFormDataContent 
+            var requestBody = new MultipartFormDataContent
             {
                 { new StringContent(apiName, Encoding.UTF8),"name"},
                 { openApiSpecContent, "openApiSpec", version.OpenApiSpecFile.Substring(version.OpenApiSpecFile.LastIndexOf('/')+1) },
